@@ -32,7 +32,7 @@ export function useWeather(deps: string|number[]) {
       }
     },
     {
-      refreshDeps: [location, deps],
+      refreshDeps: [location, ...deps],
     }
   );
 
