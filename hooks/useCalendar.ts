@@ -64,8 +64,8 @@ export function useCalendar() {
           (jieri?.length > 6 ? "" : jieri) || // 节日
           jieqi ||
           (date.nri === "初一" ? date.nyue : date.nri), // 初一展示月份
-        yi: date.yi.split("|").join(","),
-        ji: date.ji.split("|").join(","),
+        yi: date.yi.split("|").join("，"),
+        ji: date.ji.split("|").join("， "),
       };
     });
 

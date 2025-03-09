@@ -26,7 +26,6 @@ export function DesktopCalendarClock() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const { calendars, currentTime, todayInfo } = useCalendar();
-  console.log(".calendars", todayInfo);
   const { year, month, date, hours, minutes, seconds, day } = currentTime;
 
   const emptyEl = useMemo(() => {
@@ -101,23 +100,17 @@ export function DesktopCalendarClock() {
         } shadow-xl`}
         onClick={toggleControls}
       >
-        <div className='flex h-full flex-col md:flex-row'>
+        <div className='flex h-full flex-col md:flex-row items-stretch'>
           {/* 左侧日历部分 */}
           <div
-            className={`w-full p-[2vh] md:w-1/2 md:border-r ${
+            className={`w-full p-[2vh] md:w-2/3 md:border-r ${
               isDarkTheme ? "md:border-gray-700" : "md:border-gray-300"
             }`}
           >
-            <div className='mb-[2vh] mt-[1vh]'>
-              <div className='text-[2.5vh] font-bold'>
-                {year}年{month}月{date}日 {weekDaysFull[day]}
-              </div>
-            </div>
-
             {/* 星期标题 */}
             <div className='mb-[1vh] grid grid-cols-7 text-center'>
               {weekDays.map((day, index) => (
-                <div key={index} className='text-[1.8vh]'>
+                <div key={index} className='text-[4vh]'>
                   {day}
                 </div>
               ))}
@@ -142,9 +135,9 @@ export function DesktopCalendarClock() {
                 >
                   {item && (
                     <>
-                      <div className='text-[1.8vh]'>{item.day}</div>
+                      <div className='text-[3.2vh] font-bold'>{item.day}</div>
                       <div
-                        className={`text-[1.2vh] ${
+                        className={`text-[2.5vh] ${
                           isDarkTheme ? "text-gray-400" : "text-gray-600"
                         }`}
                       >
@@ -157,10 +150,10 @@ export function DesktopCalendarClock() {
             </div>
 
             {/* 今日宜忌 */}
-            <div className='mt-[2vh] space-y-[1vh]'>
-              <div className='text-[1.8vh] font-bold'>今日宜忌</div>
-              <div className='text-[1.5vh]'>
-                <div>
+            <div className='mt-[3vh] space-y-[1vh]'>
+              <div className='text-[2.4vh] font-bold'>今日宜忌</div>
+              <div className='text-[2vh]'>
+                <div className="pb-[1vh]">
                   <span className='text-green-500'>宜：</span>
                   {todayInfo?.yi}
                 </div>
@@ -173,7 +166,12 @@ export function DesktopCalendarClock() {
           </div>
 
           {/* 右侧时间和天气部分 */}
-          <div className='w-full p-[2vh] md:w-1/2'>
+          <div className='w-full p-[2vh] md:w-1/3'>
+            <div className='mb-[2vh]'>
+              <div className='text-[4vh] font-bold align-text-top'>
+                {year}年{month}月{date}日 {weekDaysFull[day]}
+              </div>
+            </div>
             {/* 时间显示 - 调整大小并使秒与分钟相同大小 */}
             <div className='mb-[3vh] flex items-end justify-between'>
               <div className='flex items-baseline'>
@@ -188,7 +186,7 @@ export function DesktopCalendarClock() {
             <div className='mb-[2vh] flex items-center justify-between'>
               <div>
                 <div
-                  className={`text-[1.8vh] ${
+                  className={`text-[2.4vh] ${
                     isDarkTheme ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
@@ -196,14 +194,14 @@ export function DesktopCalendarClock() {
                   {weather?.forecast?.[0]?.tempMax}°C
                 </div>
                 <div
-                  className={`text-[1.8vh] ${
+                  className={`text-[2.4vh] ${
                     isDarkTheme ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
                   风力等级: {weather?.today?.windScale}
                 </div>
                 <div
-                  className={`text-[1.8vh] ${
+                  className={`text-[2.4vh] ${
                     isDarkTheme ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
@@ -212,24 +210,24 @@ export function DesktopCalendarClock() {
               </div>
               <div className='flex items-center gap-[1vh]'>
                 <div className='flex flex-col items-end'>
-                  <div className='text-[4vh] font-bold'>
+                  <div className='text-[5vh] font-bold'>
                     {weather?.today?.temp}°C
                   </div>
-                  <div className='text-[1.8vh]'>
+                  <div className='text-[2vh]'>
                     湿度 {weather?.today?.humidity}%
                   </div>
                 </div>
                 {weather?.today?.icon && (
                   <WeatherIcon
                     icon={weather?.today?.icon}
-                    className='w-[6vh]'
+                    className='w-[10vh]'
                   />
                 )}
               </div>
             </div>
 
             {/* 天气预报 */}
-            <div className='grid grid-cols-3 gap-[1vh]'>
+            <div className='grid grid-cols-2 gap-[1vh]'>
               {weather?.forecast?.map((day, index) => {
                 if (index === 0) {
                   return null;
@@ -237,16 +235,21 @@ export function DesktopCalendarClock() {
                 return (
                   <div
                     key={index}
-                    className={`flex flex-col items-center rounded-lg ${
+                    className={`flex flex-col items-center rounded-lg p-[2vh] ${
                       isDarkTheme ? "bg-gray-900" : "bg-gray-100"
                     } p-[1vh]`}
                   >
-                    <div className='text-[1.8vh]'>{day.fxDate}</div>
-                    <div className='text-[1.8vh]'>{day.textDay}</div>
-                    <WeatherIcon icon={day.iconDay} className='w-[4vh]' />
-
-                    <div className='text-[1.5vh]'>
-                      {day.tempMin}-{day.tempMax}°C
+                    <div className='text-[2.4vh] w-full'>{day.fxDate}</div>
+                    <div className='flex justify-between w-full'>
+                      <div>
+                        <div className='text-[2.5vh]'>{day.textDay}</div>
+                        <div className='text-[2vh]'>
+                          {day.tempMin}-{day.tempMax}°C
+                        </div>
+                      </div>
+                      <div>
+                        <WeatherIcon icon={day.iconDay} className='w-[6.5vh]' />
+                      </div>
                     </div>
                   </div>
                 );
