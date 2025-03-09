@@ -192,7 +192,10 @@ export function get7DaysWeather(location: string) {
     )
     .then((res) => {
       if (res.code === "200") {
-        return res.daily;
+        return res.daily.map(item=>({
+          ...item,
+          date: item.fxDate.slice(5, 10),
+        }));
       }
     });
 }

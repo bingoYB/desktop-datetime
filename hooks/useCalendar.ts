@@ -61,7 +61,7 @@ export function useCalendar() {
         day: Number(date.yri),
         week: weekDaysFull.indexOf(date.xingqi) + 1,
         bottom:
-          (jieri?.length > 6 ? "" : jieri) || // 节日
+          (jieri?.length > 5 ? "" : jieri) || // 节日
           jieqi ||
           (date.nri === "初一" ? date.nyue : date.nri), // 初一展示月份
         yi: date.yi.split("|").join("，"),

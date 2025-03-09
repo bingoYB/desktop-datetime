@@ -45,7 +45,7 @@ export function DesktopCalendarClock() {
     return arr;
   }, [calendars]);
 
-  const weather = useWeather();
+  const weather = useWeather([date]);
 
   // 获取时间段
   const getPeriod = () => {
@@ -122,7 +122,7 @@ export function DesktopCalendarClock() {
               {calendars?.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex flex-col items-center justify-center py-[0.5vh]
+                  className={`flex flex-col items-center justify-center py-[0.5vh] rounded-sm
                     ${
                       item.day === date
                         ? "bg-red-600 font-bold"
@@ -138,7 +138,7 @@ export function DesktopCalendarClock() {
                       <div className='text-[3.2vh] font-bold'>{item.day}</div>
                       <div
                         className={`text-[2.5vh] ${
-                          isDarkTheme ? "text-gray-400" : "text-gray-600"
+                          isDarkTheme ? "text-gray-300" : "text-gray-600"
                         }`}
                       >
                         {item.bottom}
@@ -179,7 +179,7 @@ export function DesktopCalendarClock() {
                   {hours}:{minutes}:{seconds}
                 </span>
               </div>
-              <div className='text-[3vh]'>{getPeriod()}</div>
+              <div className='text-[2vh]'>{getPeriod()}</div>
             </div>
 
             {/* 当前天气 */}
@@ -236,10 +236,10 @@ export function DesktopCalendarClock() {
                   <div
                     key={index}
                     className={`flex flex-col items-center rounded-lg p-[2vh] ${
-                      isDarkTheme ? "bg-gray-900" : "bg-gray-100"
+                      isDarkTheme ? "bg-gray-700" : "bg-gray-100"
                     } p-[1vh]`}
                   >
-                    <div className='text-[2.4vh] w-full'>{day.fxDate}</div>
+                    <div className='text-[2.4vh] w-full'>{day.date}</div>
                     <div className='flex justify-between w-full'>
                       <div>
                         <div className='text-[2.5vh]'>{day.textDay}</div>

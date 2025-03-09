@@ -1,5 +1,5 @@
 import { getLocation } from "@/lib/utils";
-import { get7DaysWeather, getTodayWeather, queryCity } from "@/service";
+import { get7DaysWeather, getTodayWeather } from "@/service";
 import { useRequest } from "ahooks";
 
 export function useLocation() {
@@ -17,7 +17,7 @@ export function useLocation() {
   return location;
 }
 
-export function useWeather() {
+export function useWeather(deps: string|number[]) {
   const location = useLocation();
 
   const { data: weather } = useRequest(
@@ -32,7 +32,7 @@ export function useWeather() {
       }
     },
     {
-      refreshDeps: [location],
+      refreshDeps: [location, deps],
     }
   );
 
