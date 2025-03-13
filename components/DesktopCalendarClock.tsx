@@ -95,7 +95,7 @@ export function DesktopCalendarClock() {
   return (
     <>
       <div
-        className={`relative h-full w-full overflow-hidden rounded-lg ${
+        className={`relative h-full w-full overflow-hidden ${
           isDarkTheme ? "bg-black text-white" : "bg-white text-black"
         } shadow-xl`}
         onClick={toggleControls}
