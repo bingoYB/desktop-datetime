@@ -110,7 +110,7 @@ export function DesktopCalendarClock() {
             {/* 星期标题 */}
             <div className='mb-[1vh] grid grid-cols-7 text-center'>
               {weekDays.map((day, index) => (
-                <div key={index} className='text-[4vh]'>
+                <div key={index} className='text-[3.4vh]'>
                   {day}
                 </div>
               ))}
@@ -135,7 +135,7 @@ export function DesktopCalendarClock() {
                 >
                   {item && (
                     <>
-                      <div className='text-[3.2vh] font-bold'>{item.day}</div>
+                      <div className='text-[4vh] font-bold'>{item.day}</div>
                       <div
                         className={`text-[2.5vh] ${
                           isDarkTheme ? "text-gray-300" : "text-gray-600"
@@ -150,7 +150,7 @@ export function DesktopCalendarClock() {
             </div>
 
             {/* 今日宜忌 */}
-            <div className='mt-[3vh] space-y-[1vh] ml-16'>
+            <div className='mt-[3vh] space-y-[1vh] ml-8'>
               <div className='text-[2.4vh] font-bold'>今日宜忌</div>
               <div className='text-[3vh]'>
                 <div className="pb-[1vh]">
@@ -168,18 +168,17 @@ export function DesktopCalendarClock() {
           {/* 右侧时间和天气部分 */}
           <div className='w-full p-[2vh] md:w-1/3'>
             <div className='mb-[2vh]'>
-              <div className='text-[4vh] font-bold align-text-top'>
+              <div className='text-[4.3vh] font-bold align-text-top'>
                 {year}年{month}月{date}日 {weekDaysFull[day]}
               </div>
             </div>
             {/* 时间显示 - 调整大小并使秒与分钟相同大小 */}
             <div className='mb-[3vh] flex items-end justify-between'>
               <div className='flex items-baseline'>
-                <span className='text-[10vh] font-bold'>
+                <span className='text-[11vh] font-bold'>
                   {hours}:{minutes}:{seconds}
                 </span>
               </div>
-              <div className='text-[2vh]'>{getPeriod()}</div>
             </div>
 
             {/* 当前天气 */}
