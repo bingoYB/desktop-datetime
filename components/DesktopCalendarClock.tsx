@@ -103,7 +103,7 @@ export function DesktopCalendarClock() {
         <div className='flex h-full flex-col md:flex-row items-stretch'>
           {/* 左侧日历部分 */}
           <div
-            className={`w-full p-[2vh] md:w-2/3 md:border-r ${
+            className={`w-full p-[2vh] md:w-2/3 md:border-r flex flex-col justify-center ${
               isDarkTheme ? "md:border-gray-700" : "md:border-gray-300"
             }`}
           >
@@ -150,9 +150,9 @@ export function DesktopCalendarClock() {
             </div>
 
             {/* 今日宜忌 */}
-            <div className='mt-[3vh] space-y-[1vh]'>
+            <div className='mt-[3vh] space-y-[1vh] ml-16'>
               <div className='text-[2.4vh] font-bold'>今日宜忌</div>
-              <div className='text-[2vh]'>
+              <div className='text-[3vh]'>
                 <div className="pb-[1vh]">
                   <span className='text-green-500'>宜：</span>
                   {todayInfo?.yi}
