@@ -59,7 +59,7 @@ export function useCalendar() {
 
       return {
         day: Number(date.yri),
-        week: weekDaysFull.indexOf(date.xingqi) + 1,
+        week: +date.WEEKJ,
         bottom:
           (jieri?.length > 5 ? "" : jieri) || // 节日
           jieqi ||

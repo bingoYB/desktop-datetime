@@ -28,12 +28,15 @@ export function DesktopCalendarClock() {
   const { calendars, currentTime, todayInfo } = useCalendar();
   const { year, month, date, hours, minutes, seconds, day } = currentTime;
 
+  // 月历前空余位置，日历从星期日开始
+  // calendars week: 星期日=1, 星期一=2, ..., 星期六=7
   const emptyEl = useMemo(() => {
     const arr = [];
     if (calendars?.length) {
       const firstDay = calendars?.[0]?.week;
+      const emptyCount = firstDay;
 
-      for (let i = 1; i < firstDay; i++) {
+      for (let i = 0; i < emptyCount; i++) {
         arr.push(
           <div
             key={i}
