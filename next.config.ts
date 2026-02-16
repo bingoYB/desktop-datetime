@@ -2,12 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'export',
-  eslint: {
-    ignoreDuringBuilds: true
-  },
+
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true, // 核心配置：禁用内置图片优化
   },
 };
 
