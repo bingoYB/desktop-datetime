@@ -1,299 +1,201 @@
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
-import { Maximize, Minimize, Settings } from "lucide-react";
-import { SettingsModal } from "./SettingsModal";
-import { useCalendar } from "@/hooks/useCalendar";
-import { useWeather } from "@/hooks/useWeather";
-import WeatherIcon from "./WeatherIcon";
-
-// 星期几
-const weekDays = ["日", "一", "二", "三", "四", "五", "六"];
-const weekDaysFull = [
-  "星期日",
-  "星期一",
-  "星期二",
-  "星期三",
-  "星期四",
-  "星期五",
-  "星期六",
-];
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { CloudOff, Cloud, Maximize2, Minimize2, Settings2 } from "lucide-react"
+import { CalendarPanel } from "@/components/CalendarPanel"
+import { ClockPanel } from "@/components/ClockPanel"
+import { SettingsModal } from "@/components/SettingsModal"
+import { WeatherPanel } from "@/components/WeatherPanel"
+import { useCalendar } from "@/hooks/useCalendar"
+import { useClock } from "@/hooks/useClock"
+import { useWeather } from "@/hooks/useWeather"
+import { cn } from "@/lib/utils"
+import WeatherBackground, { WeatherCondition } from "@/components/Weather/WeatherBackground"
 
 export function DesktopCalendarClock() {
-  const [showControls, setShowControls] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isDarkTheme, setIsDarkTheme] = useState(true)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [showControls, setShowControls] = useState(false)
+  const [showWeatherBg, setShowWeatherBg] = useState(true)
+  const controlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const { calendars, currentTime, todayInfo } = useCalendar();
-  const { year, month, date, hours, minutes, seconds, day } = currentTime;
+  const clock = useClock()
+  const { calendars, leadingEmptyCount, monthTitle, todayInfo } = useCalendar(clock.now)
+  const { weather, loading, hasLocation } = useWeather([clock.date])
+  const calendarMonthKey = `${clock.year}-${clock.month}`
 
-  // 月历前空余位置，日历从星期日开始
-  // calendars week: 星期日=1, 星期一=2, ..., 星期六=7
-  const emptyEl = useMemo(() => {
-    const arr = [];
-    if (calendars?.length) {
-      const firstDay = calendars?.[0]?.week;
-      const emptyCount = firstDay;
+  const weatherCondition = useMemo<WeatherCondition>(() => {
+    if (!weather?.today?.icon) return 'none';
+    const icon = parseInt(weather.today.icon, 10);
 
-      for (let i = 0; i < emptyCount; i++) {
-        arr.push(
-          <div
-            key={i}
-            className={`flex flex-col items-center justify-center py-[0.5vh] invisible`}
-          ></div>
-        );
-      }
+    console.log(icon);
+    
+    // QWeather Icons mapping
+    if (icon >= 300 && icon < 400) {
+       if (icon >= 302 && icon <= 304) return 'storm';
+       return 'rain';
     }
-    return arr;
-  }, [calendars]);
+    if (icon >= 400 && icon < 500) {
+       if (icon === 400 || icon === 408) return 'gentle-snow';
+       return 'snow';
+    }
+    if (icon >= 500 && icon <= 515) {
+       return 'fog'; // 501 is dense fog but generic fog is fine
+    }
+    return 'none';
+  }, [weather]);
 
-  const weather = useWeather([date]);
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement))
+    }
 
-  // 获取时间段
-  const getPeriod = () => {
-    if (hours < 12) return "上午";
-    return "下午";
-  };
+    document.addEventListener("fullscreenchange", onFullscreenChange)
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange)
+  }, [])
 
-  // 添加点击处理函数
-  const toggleControls = () => {
-    setShowControls((prev) => !prev);
-  };
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen()
+        return
+      }
 
-  // 添加全屏处理函数
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement
-        .requestFullscreen()
-        .then(() => {
-          setIsFullscreen(true);
-        })
-        .catch((err) => {
-          console.error(
-            `Error attempting to enable fullscreen: ${err.message}`
-          );
-        });
-    } else {
       if (document.exitFullscreen) {
-        document
-          .exitFullscreen()
-          .then(() => {
-            setIsFullscreen(false);
-          })
-          .catch((err) => {
-            console.error(
-              `Error attempting to exit fullscreen: ${err.message}`
-            );
-          });
+        await document.exitFullscreen()
+      }
+    } catch (error) {
+      console.error("Failed to toggle fullscreen", error)
+    }
+  }, [])
+
+  const handleScreenClick = useCallback(() => {
+    setShowControls(prev => {
+      const next = !prev
+      // Auto-hide after 5 seconds
+      if (controlsTimerRef.current) {
+        clearTimeout(controlsTimerRef.current)
+        controlsTimerRef.current = null
+      }
+      if (next) {
+        controlsTimerRef.current = setTimeout(() => {
+          setShowControls(false)
+          controlsTimerRef.current = null
+        }, 5000)
+      }
+      return next
+    })
+  }, [])
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (controlsTimerRef.current) {
+        clearTimeout(controlsTimerRef.current)
       }
     }
-  };
-
-  // 修改toggleTheme函数为openSettings函数
-  const openSettings = () => {
-    setIsSettingsOpen(true);
-  };
+  }, [])
 
   return (
     <>
       <div
-        className={`relative h-full w-full overflow-hidden ${
-          isDarkTheme ? "bg-black text-white" : "bg-white text-black"
-        } shadow-xl`}
-        onClick={toggleControls}
+        className={cn(
+          "relative min-h-screen overflow-x-hidden overflow-y-auto transition-colors duration-500 lg:h-screen lg:overflow-hidden",
+          isDarkTheme ? "bg-[#040712] text-slate-100" : "bg-[#f5efe1] text-slate-900"
+        )}
+        onClick={handleScreenClick}
       >
-        <div className='flex h-full flex-col md:flex-row items-stretch'>
-          {/* 左侧日历部分 */}
-          <div
-            className={`w-full p-[2vh] md:w-2/3 md:border-r flex flex-col justify-center ${
-              isDarkTheme ? "md:border-gray-700" : "md:border-gray-300"
-            }`}
-          >
-            {/* 星期标题 */}
-            <div className='mb-[1vh] grid grid-cols-7 text-center'>
-              {weekDays.map((day, index) => (
-                <div key={index} className='text-[3.4vh]'>
-                  {day}
-                </div>
-              ))}
-            </div>
+        {showWeatherBg && <WeatherBackground weather={weatherCondition} />}
+        <div
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute -top-20 left-[-12%] h-72 w-72 rounded-full blur-3xl",
+            isDarkTheme ? "bg-cyan-400/20" : "bg-amber-300/45"
+          )}
+        />
+        <div
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute bottom-[-18%] right-[-8%] h-96 w-96 rounded-full blur-3xl",
+            isDarkTheme ? "bg-indigo-500/25" : "bg-orange-300/45"
+          )}
+        />
 
-            {/* 日历网格 */}
-            <div className='grid grid-cols-7 gap-1 text-center'>
-              {emptyEl}
-              {calendars?.map((item, index) => (
-                <div
-                  key={index}
-                  className={`flex flex-col items-center justify-center py-[0.5vh] rounded-sm
-                    ${
-                      item.day === date
-                        ? "bg-red-600 font-bold"
-                        : isDarkTheme
-                        ? "hover:bg-gray-800"
-                        : "hover:bg-gray-200"
-                    }
-                    ${day === null ? "invisible" : ""}
-                  `}
-                >
-                  {item && (
-                    <>
-                      <div className='text-[4vh] font-bold'>{item.day}</div>
-                      <div
-                        className={`text-[2.5vh] ${
-                          isDarkTheme ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      >
-                        {item.bottom}
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* 今日宜忌 */}
-            <div className='mt-[3vh] space-y-[1vh] ml-8'>
-              <div className='text-[2.4vh] font-bold'>今日宜忌</div>
-              <div className='text-[3vh]'>
-                <div className="pb-[1vh]">
-                  <span className='text-green-500'>宜：</span>
-                  {todayInfo?.yi}
-                </div>
-                <div>
-                  <span className='text-red-500'>忌：</span>
-                  {todayInfo?.ji}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 右侧时间和天气部分 */}
-          <div className='w-full p-[2vh] md:w-1/3'>
-            <div className='mb-[2vh]'>
-              <div className='text-[4.3vh] font-bold align-text-top'>
-                {year}年{month}月{date}日 {weekDaysFull[day]}
-              </div>
-            </div>
-            {/* 时间显示 - 调整大小并使秒与分钟相同大小 */}
-            <div className='mb-[3vh] flex items-end justify-between'>
-              <div className='flex items-baseline'>
-                <span className='text-[11vh] font-bold'>
-                  {hours}:{minutes}:{seconds}
-                </span>
-              </div>
-            </div>
-
-            {/* 当前天气 */}
-            <div className='mb-[2vh] flex items-center justify-between'>
-              <div>
-                <div
-                  className={`text-[2.4vh] ${
-                    isDarkTheme ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
-                  温度: {weather?.forecast?.[0]?.tempMin} ~{" "}
-                  {weather?.forecast?.[0]?.tempMax}°C
-                </div>
-                <div
-                  className={`text-[2.4vh] ${
-                    isDarkTheme ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
-                  风力等级: {weather?.today?.windScale}
-                </div>
-                <div
-                  className={`text-[2.4vh] ${
-                    isDarkTheme ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
-                  风速: {weather?.today?.windSpeed}
-                </div>
-              </div>
-              <div className='flex items-center gap-[1vh]'>
-                <div className='flex flex-col items-end'>
-                  <div className='text-[5vh] font-bold'>
-                    {weather?.today?.temp}°C
-                  </div>
-                  <div className='text-[2vh]'>
-                    湿度 {weather?.today?.humidity}%
-                  </div>
-                </div>
-                {weather?.today?.icon && (
-                  <WeatherIcon
-                    icon={weather?.today?.icon}
-                    className='w-[10vh]'
-                  />
-                )}
-              </div>
-            </div>
-
-            {/* 天气预报 */}
-            <div className='grid grid-cols-2 gap-[1vh]'>
-              {weather?.forecast?.map((day, index) => {
-                if (index === 0) {
-                  return null;
-                }
-                return (
-                  <div
-                    key={index}
-                    className={`flex flex-col items-center rounded-lg p-[2vh] ${
-                      isDarkTheme ? "bg-gray-700" : "bg-gray-100"
-                    } p-[1vh]`}
-                  >
-                    <div className='text-[2.4vh] w-full'>{day.date}</div>
-                    <div className='flex justify-between w-full'>
-                      <div>
-                        <div className='text-[2.5vh]'>{day.textDay}</div>
-                        <div className='text-[2vh]'>
-                          {day.tempMin}-{day.tempMax}°C
-                        </div>
-                      </div>
-                      <div>
-                        <WeatherIcon icon={day.iconDay} className='w-[6.5vh]' />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* 控制面板 */}
-        {showControls && (
-          <div
-            className='absolute bottom-[2vh] right-[2vh] flex gap-[1vh]'
+        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1680px] flex-col p-3 sm:p-4 md:p-6 lg:h-screen">
+          <header
+            className={cn(
+              "absolute right-3 top-3 z-20 flex gap-2 transition-all duration-300 sm:right-4 sm:top-4 md:right-6 md:top-6",
+              showControls ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
+            )}
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className={`flex h-[6vh] w-[6vh] items-center justify-center rounded-full ${
+              type="button"
+              className={cn(
+                "inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
                 isDarkTheme
-                  ? "bg-gray-800 text-white hover:bg-gray-700"
-                  : "bg-gray-200 text-black hover:bg-gray-300"
-              }`}
-              onClick={openSettings}
-              title='打开设置'
-            >
-              <Settings className='h-[3vh] w-[3vh]' />
-            </button>
-            <button
-              className={`flex h-[6vh] w-[6vh] items-center justify-center rounded-full ${
-                isDarkTheme
-                  ? "bg-gray-800 text-white hover:bg-gray-700"
-                  : "bg-gray-200 text-black hover:bg-gray-300"
-              }`}
-              onClick={toggleFullscreen}
-              title={isFullscreen ? "退出全屏" : "进入全屏"}
-            >
-              {isFullscreen ? (
-                <Minimize className='h-[3vh] w-[3vh]' />
-              ) : (
-                <Maximize className='h-[3vh] w-[3vh]' />
+                  ? "border-slate-700/70 bg-slate-900/80 hover:bg-slate-800"
+                  : "border-amber-200 bg-white/80 hover:bg-white"
               )}
+              onClick={() => setShowWeatherBg(prev => !prev)}
+              aria-label={showWeatherBg ? "关闭天气背景" : "开启天气背景"}
+              title={showWeatherBg ? "关闭天气背景" : "开启天气背景"}
+            >
+              {showWeatherBg ? <Cloud className="h-5 w-5" /> : <CloudOff className="h-5 w-5" />}
             </button>
-          </div>
-        )}
+
+            <button
+              type="button"
+              className={cn(
+                "inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
+                isDarkTheme
+                  ? "border-slate-700/70 bg-slate-900/80 hover:bg-slate-800"
+                  : "border-amber-200 bg-white/80 hover:bg-white"
+              )}
+              onClick={() => setIsSettingsOpen(true)}
+              aria-label="打开设置"
+            >
+              <Settings2 className="h-5 w-5" />
+            </button>
+
+            <button
+              type="button"
+              className={cn(
+                "inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
+                isDarkTheme
+                  ? "border-slate-700/70 bg-slate-900/80 hover:bg-slate-800"
+                  : "border-amber-200 bg-white/80 hover:bg-white"
+              )}
+              onClick={toggleFullscreen}
+              aria-label={isFullscreen ? "退出全屏" : "进入全屏"}
+            >
+              {isFullscreen ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
+            </button>
+          </header>
+
+          <main className="grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)]">
+            <CalendarPanel
+              key={calendarMonthKey}
+              monthTitle={monthTitle}
+              calendars={calendars}
+              leadingEmptyCount={leadingEmptyCount}
+              currentDay={clock.date}
+              todayInfo={todayInfo}
+              isDarkTheme={isDarkTheme}
+            />
+
+            <section className="grid gap-4 lg:min-h-0 lg:grid-rows-[auto_minmax(0,1fr)]">
+              <ClockPanel clock={clock} isDarkTheme={isDarkTheme} />
+              <WeatherPanel
+                weather={weather ?? null}
+                loading={loading}
+                hasLocation={hasLocation}
+                isDarkTheme={isDarkTheme}
+              />
+            </section>
+          </main>
+        </div>
       </div>
 
       <SettingsModal
@@ -303,5 +205,5 @@ export function DesktopCalendarClock() {
         setIsDarkTheme={setIsDarkTheme}
       />
     </>
-  );
+  )
 }

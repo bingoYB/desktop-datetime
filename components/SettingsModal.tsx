@@ -1,7 +1,8 @@
 "use client"
 
-import React from "react"
+import type { FormEvent } from "react"
 import { X } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -16,58 +17,97 @@ export function SettingsModal({
   isDarkTheme,
   setIsDarkTheme,
 }: SettingsModalProps) {
+  if (!isOpen) {
+    return null
+  }
 
-  if (!isOpen) return null
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault()
     onClose()
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"
+      onClick={onClose}
+      role="presentation"
+    >
       <div
-        className={`w-full max-w-md rounded-lg ${isDarkTheme ? "bg-gray-800 text-white" : "bg-white text-black"} p-[3vh] shadow-xl`}
+        className={cn(
+          "w-full max-w-md rounded-3xl border px-5 py-6 shadow-2xl backdrop-blur-xl md:px-6",
+          isDarkTheme
+            ? "border-slate-700/70 bg-slate-900/95 text-slate-100"
+            : "border-amber-200/80 bg-white/95 text-slate-900"
+        )}
+        onClick={(event) => event.stopPropagation()}
       >
-        <div className="mb-[2vh] flex items-center justify-between">
-          <h2 className="text-[3vh] font-bold">设置</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X className="h-[3vh] w-[3vh]" />
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-xl font-semibold md:text-2xl">显示设置</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="关闭设置"
+            className={cn(
+              "inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors",
+              isDarkTheme ? "hover:bg-slate-800" : "hover:bg-slate-100"
+            )}
+          >
+            <X className="h-5 w-5" />
           </button>
         </div>
+
         <form onSubmit={handleSubmit}>
-          <div className="mb-[2vh]">
-            <label className="mb-[1vh] block text-[2vh] font-bold">主题</label>
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center">
+          <fieldset>
+            <legend className="text-sm font-medium tracking-[0.14em]">主题</legend>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <label
+                className={cn(
+                  "cursor-pointer rounded-2xl border px-4 py-3 text-sm transition-colors",
+                  isDarkTheme
+                    ? "border-cyan-300/70 bg-cyan-500/15"
+                    : "border-slate-200 bg-white"
+                )}
+              >
                 <input
                   type="radio"
                   name="theme"
                   value="dark"
                   checked={isDarkTheme}
                   onChange={() => setIsDarkTheme(true)}
-                  className="mr-[1vh] h-[2vh] w-[2vh]"
+                  className="sr-only"
                 />
-                <span className="text-[2vh]">暗色</span>
+                暗色主题
               </label>
-              <label className="flex items-center">
+
+              <label
+                className={cn(
+                  "cursor-pointer rounded-2xl border px-4 py-3 text-sm transition-colors",
+                  isDarkTheme
+                    ? "border-slate-700/70 bg-slate-800"
+                    : "border-amber-300/80 bg-amber-50"
+                )}
+              >
                 <input
                   type="radio"
                   name="theme"
                   value="light"
                   checked={!isDarkTheme}
                   onChange={() => setIsDarkTheme(false)}
-                  className="mr-[1vh] h-[2vh] w-[2vh]"
+                  className="sr-only"
                 />
-                <span className="text-[2vh]">亮色</span>
+                亮色主题
               </label>
             </div>
-          </div>
+          </fieldset>
+
           <button
             type="submit"
-            className={`w-full rounded-md ${
-              isDarkTheme ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-blue-500 text-white hover:bg-blue-600"
-            } px-[2vh] py-[1.5vh] text-[2vh] font-bold`}
+            className={cn(
+              "mt-5 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-colors",
+              isDarkTheme
+                ? "bg-cyan-400 text-slate-900 hover:bg-cyan-300"
+                : "bg-slate-900 text-white hover:bg-slate-700"
+            )}
           >
             保存设置
           </button>
@@ -76,4 +116,3 @@ export function SettingsModal({
     </div>
   )
 }
-

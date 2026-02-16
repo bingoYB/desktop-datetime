@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "桌面日历",
-  description: "桌面日历，时间，天气",
-  referrer: "no-referrer"
+  title: "桌面日历时钟",
+  description: "桌面全屏日历、实时时钟与天气信息面板",
+  referrer: "no-referrer",
 };
 
 export default function RootLayout({
@@ -13,14 +13,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang='zh-CN'>
       <head>
-        <link rel='icon' href='/favicon.ico' />
       </head>
-      <body>
-        {children}
-        {/* <Script src='https://unpkg.com/holiday-calendar/src/index.min.js' /> */}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -5,26 +5,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export async function getLocation(): Promise<{ latitude: number; longitude: number } | undefined> {
-  if ("geolocation" in navigator) {
-    return new Promise((resolve, reject) => {
-      try {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            resolve({ latitude, longitude });
-          },
-          (error) => {
-            console.error("Error getting location:", error);
-            reject();
-          }
-        );
-      } catch (error) {
-        reject(error);
-      }
-    });
-  } else {
-    console.error("Geolocation is not supported by this browser.");
+export async function getLocation(): Promise<{ latitude: number; longitude: number } | null> {
+  if (typeof window === "undefined" || !("geolocation" in navigator)) {
+    return null
   }
+
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+      },
+      () => resolve(null),
+      {
+        maximumAge: 5 * 60 * 1000,
+        timeout: 8 * 1000,
+      }
+    )
+  })
 }

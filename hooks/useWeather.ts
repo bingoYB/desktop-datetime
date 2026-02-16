@@ -1,40 +1,63 @@
-import { getLocation } from "@/lib/utils";
-import { get7DaysWeather, getTodayWeather } from "@/service";
-import { useRequest } from "ahooks";
+import { useMemo } from "react"
+import { useRequest } from "ahooks"
+import { getLocation } from "@/lib/utils"
+import {
+  get7DaysWeather,
+  getTodayWeather,
+  type WeatherForecastDay,
+  type WeatherNow,
+} from "@/service"
 
-export function useLocation() {
-  const { data: location } = useRequest(async () => {
-    const location = await getLocation();
-
-    // const cityInfo = await queryCity(`${location?.longitude},${location?.latitude}`);
-
-    return {
-      // city: cityInfo.location,
-      location: `${location?.longitude},${location?.latitude}`,
-    };
-  });
-
-  return location;
+export interface WeatherData {
+  today: WeatherNow | null
+  forecast: WeatherForecastDay[]
 }
 
-export function useWeather(deps: string|number[]) {
-  const location = useLocation();
+export function useLocation() {
+  const { data } = useRequest(async () => {
+    const location = await getLocation()
 
-  const { data: weather } = useRequest(
+    if (!location) {
+      return null
+    }
+
+    return `${location.longitude},${location.latitude}`
+  })
+
+  return data
+}
+
+export function useWeather(refreshDeps: Array<string | number> = []) {
+  const location = useLocation()
+
+  const { data, loading } = useRequest<WeatherData | null>(
     async () => {
-      if (location) {
-        const [today, forecast ] = await Promise.all([
-          getTodayWeather(location.location),
-          get7DaysWeather(location.location),
-        ]);
+      if (!location) {
+        return null
+      }
 
-        return {today, forecast };
+      const [today, forecast] = await Promise.all([
+        getTodayWeather(location),
+        get7DaysWeather(location),
+      ])
+
+      return {
+        today,
+        forecast,
       }
     },
     {
-      refreshDeps: [location, ...deps],
+      ready: Boolean(location),
+      refreshDeps: [location ?? "", ...refreshDeps],
     }
-  );
+  )
 
-  return weather;
+  return useMemo(
+    () => ({
+      weather: data,
+      loading,
+      hasLocation: Boolean(location),
+    }),
+    [data, loading, location]
+  )
 }
