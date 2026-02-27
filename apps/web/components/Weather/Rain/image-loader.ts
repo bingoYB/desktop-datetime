@@ -26,14 +26,14 @@ function loadImage(src: string | ImageSource, i: number, onLoad?: (img: HTMLImag
     
     img.crossOrigin = "anonymous";
 
-    img.addEventListener("load", (event) => {
+    img.addEventListener("load", () => {
       if (typeof onLoad === "function") {
         onLoad.call(null, img, i);
       }
       resolve(imageSource);
     });
 
-    img.addEventListener("error", (event) => {
+    img.addEventListener("error", () => {
       console.error("Failed to load image:", imageSource.src);
       reject(new Error(`Failed to load image: ${imageSource.src}`));
     });
@@ -50,7 +50,7 @@ function loadImages(images: (string | ImageSource)[], onLoad?: (img: HTMLImageEl
 }
 
 export default function ImageLoader(images: (string | ImageSource)[], onLoad?: (img: HTMLImageElement, i: number) => void): Promise<Record<string, LoadedImage>> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     loadImages(images, onLoad).then((loadedImages) => {
       let r: Record<string, LoadedImage> = {};
       loadedImages.forEach((curImage) => {

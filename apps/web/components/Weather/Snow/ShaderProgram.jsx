@@ -113,7 +113,7 @@ export default class ShaderProgram {
       gl[ options.depthTest ? 'enable' : 'disable' ]( gl.DEPTH_TEST )
   
       if ( options.autosize )
-        window.addEventListener( 'resize', e => this.resize( e ), false )
+        window.addEventListener( 'resize', () => this.resize(), false )
       if ( options.mousemove )
         window.addEventListener( 'mousemove', e => this.mousemove( e ), false )
   
@@ -134,7 +134,7 @@ export default class ShaderProgram {
   
     }
   
-    resize( e ) {
+    resize() {
   
       const holder = this.holder
       const canvas = this.canvas
@@ -327,7 +327,6 @@ export default class ShaderProgram {
   
     updateUniforms() {
   
-      const gl = this.gl
       const uniforms = this.data.uniforms
   
       Object.keys( uniforms ).forEach( name => {
@@ -342,7 +341,6 @@ export default class ShaderProgram {
   
     createBuffers( data ) {
   
-      const gl = this.gl
       const buffers = this.data.buffers = data
       const values = this.buffers = {}
   
@@ -399,7 +397,6 @@ export default class ShaderProgram {
   
     updateBuffers() {
   
-      const gl = this.gl
       const buffers = this.buffers
   
       Object.keys( buffers ).forEach( name =>

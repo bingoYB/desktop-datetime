@@ -5,7 +5,7 @@ export function getContext(canvas: HTMLCanvasElement, options: WebGLContextAttri
   contexts.some(name => {
     try {
       context = canvas.getContext(name, options) as WebGLRenderingContext;
-    } catch (e) { 
+    } catch { 
       // ignore
     }
     return context != null;
@@ -109,12 +109,10 @@ export function createTexture(gl: WebGLRenderingContext, source: TexImageSource 
 
 export function createUniform(gl: WebGLRenderingContext, program: WebGLProgram, type: string, name: string, ...args: any[]): void {
   const location = gl.getUniformLocation(program, "u_" + name);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (gl as any)["uniform" + type](location, ...args);
 }
 
 export function activeTexture(gl: WebGLRenderingContext, i: number): void {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   gl.activeTexture((gl as any)["TEXTURE" + i]);
 }
 

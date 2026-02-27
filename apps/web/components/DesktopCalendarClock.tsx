@@ -5,6 +5,7 @@ import { CloudOff, Cloud, Maximize2, Minimize2, Settings2 } from "lucide-react"
 import { CalendarPanel } from "@/components/CalendarPanel"
 import { ClockPanel } from "@/components/ClockPanel"
 import { SettingsModal } from "@/components/SettingsModal"
+import type { ContentPaddingLevel } from "@/components/SettingsModal"
 import { WeatherPanel } from "@/components/WeatherPanel"
 import { useCalendar } from "@/hooks/useCalendar"
 import { useClock } from "@/hooks/useClock"
@@ -15,6 +16,7 @@ import WeatherBackground, { WeatherCondition } from "@/components/Weather/Weathe
 export function DesktopCalendarClock() {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isDarkTheme, setIsDarkTheme] = useState(true)
+  const [contentPaddingLevel, setContentPaddingLevel] = useState<ContentPaddingLevel>("default")
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [showControls, setShowControls] = useState(false)
   const [showWeatherBg, setShowWeatherBg] = useState(true)
@@ -24,6 +26,14 @@ export function DesktopCalendarClock() {
   const { calendars, leadingEmptyCount, monthTitle, todayInfo } = useCalendar(clock.now)
   const { weather, loading, hasLocation } = useWeather([clock.date])
   const calendarMonthKey = `${clock.year}-${clock.month}`
+  const contentPaddingClass = useMemo(() => {
+    const paddingMap: Record<ContentPaddingLevel, string> = {
+      compact: "p-2 sm:p-3 md:p-4",
+      default: "p-3 sm:p-4 md:p-6",
+      spacious: "p-4 sm:p-6 md:p-8",
+    }
+    return paddingMap[contentPaddingLevel]
+  }, [contentPaddingLevel])
 
   const weatherCondition = useMemo<WeatherCondition>(() => {
     if (!weather?.today?.icon) return 'none';
@@ -122,7 +132,12 @@ export function DesktopCalendarClock() {
           )}
         />
 
-        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1680px] flex-col p-3 sm:p-4 md:p-6 lg:h-screen">
+        <div
+          className={cn(
+            "relative z-10 mx-auto flex min-h-screen w-full max-w-[1680px] flex-col lg:h-screen",
+            contentPaddingClass
+          )}
+        >
           <header
             className={cn(
               "absolute right-3 top-3 z-20 flex gap-2 transition-all duration-300 sm:right-4 sm:top-4 md:right-6 md:top-6",
@@ -203,6 +218,8 @@ export function DesktopCalendarClock() {
         onClose={() => setIsSettingsOpen(false)}
         isDarkTheme={isDarkTheme}
         setIsDarkTheme={setIsDarkTheme}
+        contentPaddingLevel={contentPaddingLevel}
+        setContentPaddingLevel={setContentPaddingLevel}
       />
     </>
   )

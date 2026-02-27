@@ -60,6 +60,18 @@ interface Weather7DayResponse {
   daily: WeatherDailyRaw[]
 }
 
+interface CityLookupResponse {
+  code: string
+  location: Array<{
+    name: string
+    lat: string
+    lon: string
+    adm2: string
+    adm1: string
+    country: string
+  }>
+}
+
 export interface WeatherForecastDay extends WeatherDailyRaw {
   date: string
 }
@@ -95,4 +107,12 @@ export async function get7DaysWeather(location: string): Promise<WeatherForecast
     ...item,
     date: item.fxDate.slice(5, 10),
   }))
+}
+
+export async function getCityList(location: string) {
+  const data = await requestJson<CityLookupResponse>(
+    `/city/lookup?location=${encodeURIComponent(location)}`
+  )
+
+  return data.code === "200" ? data.location : []
 }

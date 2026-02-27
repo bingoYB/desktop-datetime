@@ -4,11 +4,15 @@ import type { FormEvent } from "react"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+export type ContentPaddingLevel = "compact" | "default" | "spacious"
+
 interface SettingsModalProps {
   isOpen: boolean
   onClose: () => void
   isDarkTheme: boolean
   setIsDarkTheme: (isDark: boolean) => void
+  contentPaddingLevel: ContentPaddingLevel
+  setContentPaddingLevel: (level: ContentPaddingLevel) => void
 }
 
 export function SettingsModal({
@@ -16,6 +20,8 @@ export function SettingsModal({
   onClose,
   isDarkTheme,
   setIsDarkTheme,
+  contentPaddingLevel,
+  setContentPaddingLevel,
 }: SettingsModalProps) {
   if (!isOpen) {
     return null
@@ -25,6 +31,16 @@ export function SettingsModal({
     event.preventDefault()
     onClose()
   }
+
+  const paddingOptions: Array<{
+    value: ContentPaddingLevel
+    label: string
+    description: string
+  }> = [
+    { value: "compact", label: "紧凑", description: "更高信息密度" },
+    { value: "default", label: "标准", description: "默认推荐" },
+    { value: "spacious", label: "宽松", description: "更留白更舒适" },
+  ]
 
   return (
     <div
@@ -97,6 +113,38 @@ export function SettingsModal({
                 />
                 亮色主题
               </label>
+            </div>
+          </fieldset>
+
+          <fieldset className="mt-5">
+            <legend className="text-sm font-medium tracking-[0.14em]">内容内边距</legend>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              {paddingOptions.map((option) => (
+                <label
+                  key={option.value}
+                  className={cn(
+                    "cursor-pointer rounded-2xl border px-4 py-3 text-sm transition-colors",
+                    contentPaddingLevel === option.value
+                      ? isDarkTheme
+                        ? "border-cyan-300/70 bg-cyan-500/15"
+                        : "border-slate-300 bg-slate-50"
+                      : isDarkTheme
+                        ? "border-slate-700/70 bg-slate-800"
+                        : "border-amber-300/80 bg-amber-50"
+                  )}
+                >
+                  <input
+                    type="radio"
+                    name="contentPadding"
+                    value={option.value}
+                    checked={contentPaddingLevel === option.value}
+                    onChange={() => setContentPaddingLevel(option.value)}
+                    className="sr-only"
+                  />
+                  <p className="font-medium">{option.label}</p>
+                  <p className="mt-1 text-xs opacity-80">{option.description}</p>
+                </label>
+              ))}
             </div>
           </fieldset>
 

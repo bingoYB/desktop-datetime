@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import type { WeatherData } from "@/hooks/useWeather"
 import WeatherIcon from "@/components/WeatherIcon"
 import WeatherEffects from "@/components/Weather/WeatherEffects"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface WeatherPanelProps {
   weather: WeatherData | null
@@ -302,7 +303,7 @@ export function WeatherCard({
   const today = weather?.today
   const todayLow = forecast[0]?.tempMin ?? "-"
   const todayHigh = forecast[0]?.tempMax ?? "-"
-  const locationTitle = hasLocation ? "当前位置" : "未定位"
+  const locationTitle = weather?.cityName || (hasLocation ? "当前位置" : "未定位")
   
   const scene = sceneOverride ?? resolveWeatherScene(today?.icon ?? "")
   const weatherTheme = getWeatherCardTheme(scene, isDarkTheme)
@@ -368,22 +369,26 @@ export function WeatherCard({
 
         <div className="relative z-10 flex min-h-32 flex-col justify-between gap-4 sm:min-h-[150px] sm:gap-5">
           <div className="flex items-start justify-between gap-3 sm:gap-4">
-            <div className="min-w-0">
+            <div
+              className={cn(
+                "flex min-w-0 items-center gap-2",
+                isDarkTheme ? "text-slate-100" : "text-slate-700"
+              )}
+            >
+              <WeatherIcon
+                icon={displayIcon}
+                className={cn(
+                  "h-8 w-8 shrink-0 sm:h-9 sm:w-9",
+                  isDarkTheme ? "text-slate-100/90" : "text-slate-700/80"
+                )}
+              />
               <p
                 className={cn(
-                  "truncate text-[clamp(1.05rem,6.2vw,1.75rem)] font-semibold leading-none",
+                  "truncate text-[clamp(1.05rem,5.6vw,1.8rem)] font-semibold leading-none",
                   isDarkTheme ? "text-slate-50" : "text-slate-800"
                 )}
               >
-                {locationTitle}
-              </p>
-              <p
-                className={cn(
-                  "mt-1 text-[clamp(0.78rem,3.8vw,1.05rem)] leading-none",
-                  isDarkTheme ? "text-slate-200/85" : "text-slate-600"
-                )}
-              >
-                我的位置
+                {displayText}
               </p>
             </div>
             <p className="shrink-0 font-[var(--font-digits)] text-[clamp(1.75rem,9vw,3.1rem)] font-light leading-none tracking-tight">
@@ -392,21 +397,22 @@ export function WeatherCard({
           </div>
 
           <div className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
-            <div
-              className={cn(
-                "flex min-w-0 items-center gap-1.5",
-                isDarkTheme ? "text-slate-100" : "text-slate-700"
-              )}
-            >
-              <WeatherIcon
-                icon={displayIcon}
+            <div className="min-w-0">
+              <p
                 className={cn(
-                  "h-5 w-5 shrink-0 sm:h-6 sm:w-6",
-                  isDarkTheme ? "text-slate-100/90" : "text-slate-700/80"
+                  "text-[clamp(0.7rem,3.2vw,0.92rem)] leading-none",
+                  isDarkTheme ? "text-slate-200/85" : "text-slate-600"
                 )}
-              />
-              <p className="truncate text-[clamp(0.9rem,4.8vw,1.4rem)] font-semibold leading-none">
-                {displayText}
+              >
+                我的位置
+              </p>
+              <p
+                className={cn(
+                  "mt-1 truncate text-[clamp(0.82rem,4.2vw,1.2rem)] font-semibold leading-none",
+                  isDarkTheme ? "text-slate-50" : "text-slate-800"
+                )}
+              >
+                {locationTitle}
               </p>
             </div>
 
@@ -414,11 +420,11 @@ export function WeatherCard({
               <div className="flex min-w-0 items-end gap-1 sm:gap-1.5">
                 <p
                   className={cn(
-                    "text-[clamp(0.72rem,2.8vw,0.9rem)] font-semibold leading-[0.92]",
+                    "whitespace-nowrap text-[clamp(0.72rem,2.8vw,0.9rem)] font-semibold leading-[0.92]",
                     isDarkTheme ? "text-slate-200/90" : "text-slate-600"
                   )}
                 >
-                  最<br />高
+                  最高
                 </p>
                 <p className="font-[var(--font-digits)] text-[clamp(1.3rem,6.2vw,2.05rem)] font-light leading-none">
                   {displayHigh}°
@@ -427,11 +433,11 @@ export function WeatherCard({
               <div className="flex min-w-0 items-end gap-1 sm:gap-1.5">
                 <p
                   className={cn(
-                    "text-[clamp(0.72rem,2.8vw,0.9rem)] font-semibold leading-[0.92]",
+                    "whitespace-nowrap text-[clamp(0.72rem,2.8vw,0.9rem)] font-semibold leading-[0.92]",
                     isDarkTheme ? "text-slate-200/90" : "text-slate-600"
                   )}
                 >
-                  最<br />低
+                  最低
                 </p>
                 <p className="font-[var(--font-digits)] text-[clamp(1.3rem,6.2vw,2.05rem)] font-light leading-none">
                   {displayLow}°
@@ -522,53 +528,55 @@ export function WeatherPanel({
                 暂无预报数据。
               </div>
             ) : (
-              <div className="min-h-0 divide-y divide-white/10 overflow-y-auto">
-                {forecast.slice(0, 8).map((day, index) => {
-                  const min = toNumber(day.tempMin)
-                  const max = toNumber(day.tempMax)
-                  const barStart = ((min - tempRange.min) / tempRange.span) * 100
-                  const barWidth = Math.max(((max - min) / tempRange.span) * 100, 12)
+              <ScrollArea className="min-h-0 flex-1">
+                <div className="divide-y divide-white/10">
+                  {forecast.slice(0, 8).map((day, index) => {
+                    const min = toNumber(day.tempMin)
+                    const max = toNumber(day.tempMax)
+                    const barStart = ((min - tempRange.min) / tempRange.span) * 100
+                    const barWidth = Math.max(((max - min) / tempRange.span) * 100, 12)
 
-                  return (
-                    <article
-                      key={day.fxDate}
-                      className="grid grid-cols-[40px_24px_minmax(0,1fr)] items-center gap-2 px-4 py-3"
-                    >
-                      <p className="text-sm font-medium">{getWeekLabel(day.fxDate, index)}</p>
-                      <WeatherIcon
-                        icon={day.iconDay}
-                        className={cn("h-6 w-6", isDarkTheme ? "text-sky-100" : "text-sky-600")}
-                      />
+                    return (
+                      <article
+                        key={day.fxDate}
+                        className="grid grid-cols-[40px_24px_minmax(0,1fr)] items-center gap-2 px-4 py-3"
+                      >
+                        <p className="text-sm font-medium">{getWeekLabel(day.fxDate, index)}</p>
+                        <WeatherIcon
+                          icon={day.iconDay}
+                          className={cn("h-6 w-6", isDarkTheme ? "text-sky-100" : "text-sky-600")}
+                        />
 
-                      <div className="flex items-center gap-2">
-                        <p className={cn("w-9 text-right text-xs", isDarkTheme ? "text-sky-100/75" : "text-slate-500")}>
-                          {day.tempMin}°
-                        </p>
-                        <div
-                          className={cn(
-                            "relative h-1.5 flex-1 rounded-full",
-                            isDarkTheme ? "bg-slate-700/70" : "bg-sky-100"
-                          )}
-                        >
-                          <span
+                        <div className="flex items-center gap-2">
+                          <p className={cn("w-9 text-right text-xs", isDarkTheme ? "text-sky-100/75" : "text-slate-500")}>
+                            {day.tempMin}°
+                          </p>
+                          <div
                             className={cn(
-                              "absolute top-0 h-full rounded-full",
-                              isDarkTheme
-                                ? "bg-gradient-to-r from-cyan-300 to-orange-300"
-                                : "bg-gradient-to-r from-sky-400 to-amber-400"
+                              "relative h-1.5 flex-1 rounded-full",
+                              isDarkTheme ? "bg-slate-700/70" : "bg-sky-100"
                             )}
-                            style={{
-                              left: `${Math.max(Math.min(barStart, 100), 0)}%`,
-                              width: `${Math.min(barWidth, 100)}%`,
-                            }}
-                          />
+                          >
+                            <span
+                              className={cn(
+                                "absolute top-0 h-full rounded-full",
+                                isDarkTheme
+                                  ? "bg-gradient-to-r from-cyan-300 to-orange-300"
+                                  : "bg-gradient-to-r from-sky-400 to-amber-400"
+                              )}
+                              style={{
+                                left: `${Math.max(Math.min(barStart, 100), 0)}%`,
+                                width: `${Math.min(barWidth, 100)}%`,
+                              }}
+                            />
+                          </div>
+                          <p className="w-9 text-xs font-semibold text-right">{day.tempMax}°</p>
                         </div>
-                        <p className="w-9 text-xs font-semibold text-right">{day.tempMax}°</p>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              </ScrollArea>
             )}
           </article>
         </>

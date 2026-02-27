@@ -27,7 +27,7 @@ const DENSE_FOG_SETTINGS = {
   moveSpeed: 0.04,
 };
 
-function FogSprite({ texture, initial, moveSpeed, windOffset }) {
+function FogSprite({ texture, initial, windOffset }) {
   const mesh = useRef();
   const visibleRef = useRef(false); // Track if currently visible
   useFrame((state) => {
@@ -164,7 +164,6 @@ export default function FogEffect({ type = 'light' }) {
             key={i}
             texture={init.texture}
             initial={init}
-            moveSpeed={settings.moveSpeed}
             windOffset={windOffset}
           />
         ))}

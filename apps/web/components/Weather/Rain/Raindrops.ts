@@ -301,7 +301,7 @@ export default class Raindrops {
     }
     if (this.options.raining) {
       this.dropletsCounter += this.options.dropletsRate * timeScale * this.areaMultiplier;
-      times(this.dropletsCounter, (i) => {
+      times(this.dropletsCounter, () => {
         this.dropletsCounter--;
         this.drawDroplet(
           random(this.width / this.scale),
