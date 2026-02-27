@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="apps/web/public/logo.png" width="120" alt="Desktop Datetime Logo">
+  <img src="public/logo.png" width="120" alt="Desktop Datetime Logo">
 </p>
 
 # Desktop Datetime (桌面时钟天气)
@@ -37,19 +37,13 @@
 - **响应式布局**: 完美适配从移动设备到 4K 桌面显示器的各种屏幕尺寸。
 - **全屏体验**: 支持一键切换全屏，打造无干扰的类似 Kiosk 的展示体验。
 
-## 🧱 Workspace 结构
-
-- `apps/web`: 当前 Next.js 前端应用
-- `apps/api`: 后端占位目录（后续接入）
-- `packages`: 预留共享包目录
-
 ## 🚀 开发命令
 
 ```bash
-pnpm install
-pnpm dev
-pnpm lint
-pnpm build
+npm install
+npm run dev
+npm run lint
+npm run build
 ```
 
 ## 📄 许可证
