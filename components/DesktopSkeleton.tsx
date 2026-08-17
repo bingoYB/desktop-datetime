@@ -23,12 +23,14 @@ export function DesktopSkeleton() {
           {/* Left: Calendar Skeleton */}
           <section className="rounded-2xl sm:rounded-3xl border border-slate-700/60 bg-slate-900/70 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] backdrop-blur-xl p-3 sm:p-4 md:p-5 lg:p-4 xl:p-6 flex flex-col justify-between h-full min-h-0">
             {/* Header Skeleton */}
-            <div className="mb-2 sm:mb-3 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="h-4 w-20 rounded bg-slate-800 animate-pulse" />
-                <div className="h-6 sm:h-7 w-28 rounded-lg bg-slate-800 animate-pulse" />
+            <div className="mb-2 sm:mb-3 grid grid-cols-[1fr_auto_1fr] items-center shrink-0 gap-1.5 sm:gap-2">
+              <div className="flex items-center justify-start">
+                <div className="h-6 sm:h-7 w-20 sm:w-28 rounded-lg bg-slate-800 animate-pulse" />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center">
+                <div className="h-5 sm:h-6 w-24 sm:w-32 rounded-md bg-slate-800/70 animate-pulse" />
+              </div>
+              <div className="flex items-center justify-end gap-1 sm:gap-1.5 md:gap-2">
                 <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-slate-800 animate-pulse" />
                 <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-slate-800 animate-pulse" />
               </div>
@@ -63,19 +65,19 @@ export function DesktopSkeleton() {
 
           {/* Right: Clock & Weather Skeleton */}
           <section className="flex flex-col gap-3 sm:gap-4 lg:min-h-0 lg:h-full">
-            {/* Clock Panel Skeleton - 左右布局 */}
-            <section className="rounded-2xl sm:rounded-3xl border border-slate-700/60 bg-slate-900/75 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] backdrop-blur-xl p-3.5 sm:p-5 md:p-6 lg:p-4 xl:p-6 shrink-0">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 lg:gap-2.5 xl:gap-6">
+            {/* Clock Panel Skeleton - 左右布局与高度扩展 */}
+            <section className="rounded-2xl sm:rounded-3xl border border-slate-700/60 bg-slate-900/75 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] backdrop-blur-xl p-4 sm:p-6 md:p-7 lg:p-4.5 xl:p-7 2xl:p-8 shrink-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-6 lg:gap-3 xl:gap-8">
                 <div className="flex flex-col justify-center min-w-0">
-                  <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
-                    <div className="h-3 w-10 rounded bg-slate-800 animate-pulse" />
-                    <div className="h-4 w-12 rounded-full bg-slate-800 animate-pulse" />
+                  <div className="flex items-center gap-2 sm:gap-2.5 mb-1.5 sm:mb-2">
+                    <div className="h-3.5 w-10 sm:w-12 rounded bg-slate-800 animate-pulse" />
+                    <div className="h-5 w-14 sm:w-16 rounded-full bg-slate-800 animate-pulse" />
                   </div>
-                  <div className="h-6 sm:h-7 w-36 sm:w-44 rounded bg-slate-800 animate-pulse" />
-                  <div className="mt-1 h-4 w-16 rounded bg-slate-800/60 animate-pulse" />
+                  <div className="h-7 sm:h-9 w-40 sm:w-56 lg:w-40 xl:w-56 rounded bg-slate-800 animate-pulse" />
+                  <div className="mt-1.5 h-5 w-20 sm:w-24 rounded bg-slate-800/60 animate-pulse" />
                 </div>
                 <div className="shrink-0 flex items-center sm:justify-end">
-                  <div className="h-9 sm:h-12 md:h-14 lg:h-10 xl:h-14 2xl:h-16 w-48 sm:w-60 lg:w-44 xl:w-60 2xl:w-72 rounded-lg bg-slate-800 animate-pulse" />
+                  <div className="h-11 sm:h-14 md:h-16 lg:h-10 xl:h-16 2xl:h-20 w-52 sm:w-64 lg:w-48 xl:w-64 2xl:w-80 rounded-lg bg-slate-800 animate-pulse" />
                 </div>
               </div>
             </section>

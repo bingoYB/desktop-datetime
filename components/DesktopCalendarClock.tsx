@@ -192,7 +192,7 @@ export function DesktopCalendarClock() {
             <CalendarPanel
               key={calendar.monthTitle}
               calendar={calendar}
-              currentDay={clock.date}
+              clock={clock}
               isDarkTheme={isDarkTheme}
             />
 

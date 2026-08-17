@@ -1,18 +1,28 @@
 import { cn } from "@/lib/utils"
 import type { CalendarState } from "@/hooks/useCalendar"
+import type { ClockState } from "@/hooks/useClock"
 import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react"
 
 const WEEK_DAYS = ["日", "一", "二", "三", "四", "五", "六"]
+const WEEK_DAYS_FULL = [
+  "星期日",
+  "星期一",
+  "星期二",
+  "星期三",
+  "星期四",
+  "星期五",
+  "星期六",
+]
 
 interface CalendarPanelProps {
   calendar: CalendarState
-  currentDay: number
+  clock: ClockState
   isDarkTheme: boolean
 }
 
 export function CalendarPanel({
   calendar,
-  currentDay,
+  clock,
   isDarkTheme,
 }: CalendarPanelProps) {
   const {
@@ -40,19 +50,12 @@ export function CalendarPanel({
       )}
     >
       {/* Month Header */}
-      <header className="mb-2 sm:mb-3 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <p
-            className={cn(
-              "text-[10px] sm:text-xs md:text-sm tracking-[0.2em] font-semibold uppercase",
-              isDarkTheme ? "text-slate-400" : "text-slate-500"
-            )}
-          >
-            CALENDAR
-          </p>
+      <header className="mb-2 sm:mb-3 grid grid-cols-[1fr_auto_1fr] items-center shrink-0 gap-1.5 sm:gap-2">
+        {/* 左侧：月份 */}
+        <div className="flex items-center justify-start min-w-0">
           <h2
             className={cn(
-              "text-base sm:text-lg md:text-xl lg:text-lg xl:text-2xl font-bold tracking-tight",
+              "text-base sm:text-lg md:text-xl lg:text-lg xl:text-2xl font-bold tracking-tight truncate",
               isDarkTheme ? "text-slate-100" : "text-slate-800"
             )}
           >
@@ -60,7 +63,28 @@ export function CalendarPanel({
           </h2>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+        {/* 中间：具体日期与星期 */}
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 px-1 text-center whitespace-nowrap">
+          <span
+            className={cn(
+              "text-sm sm:text-base md:text-lg lg:text-sm xl:text-lg font-bold tracking-tight",
+              isDarkTheme ? "text-amber-300" : "text-amber-700"
+            )}
+          >
+            {clock.month}月{clock.date}日
+          </span>
+          <span
+            className={cn(
+              "text-xs sm:text-sm md:text-base lg:text-xs xl:text-sm font-semibold",
+              isDarkTheme ? "text-slate-400" : "text-slate-500"
+            )}
+          >
+            {WEEK_DAYS_FULL[clock.day]}
+          </span>
+        </div>
+
+        {/* 右侧：操作按钮 */}
+        <div className="flex items-center justify-end gap-1 sm:gap-1.5 md:gap-2">
           {!isCurrentMonth && (
             <button
               type="button"
@@ -141,7 +165,7 @@ export function CalendarPanel({
         ))}
 
         {calendars.map((item) => {
-          const isToday = isCurrentMonth && item.day === currentDay
+          const isToday = isCurrentMonth && item.day === clock.date
 
           return (
             <article
