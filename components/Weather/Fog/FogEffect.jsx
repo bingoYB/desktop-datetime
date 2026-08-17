@@ -144,16 +144,7 @@ export default function FogEffect({ type = 'light' }) {
   }, [fogElement, denseFogElement, settings]);
 
   return (
-    <div
-      style={{
-        width: '100vw',
-        height: '100vh',
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        position: 'relative',
-      }}
-    >
+    <div className="relative h-full w-full">
       <Canvas
         style={{ position: 'absolute', top: 0, left: 0 }}
         camera={{ position: [0, 0, 1], fov: 75 }}

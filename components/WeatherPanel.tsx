@@ -55,12 +55,18 @@ function getWeekLabel(fxDate: string, index: number): string {
     return "今天"
   }
 
-  const date = new Date(`${fxDate}T00:00:00`)
-  if (Number.isNaN(date.getTime())) {
+  if (!fxDate) {
     return `第${index + 1}天`
   }
 
-  return WEEK_DAYS[date.getDay()]
+  const match = fxDate.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/)
+  if (match) {
+    const [, y, m, d] = match
+    const date = new Date(Number(y), Number(m) - 1, Number(d))
+    return WEEK_DAYS[date.getDay()] ?? `第${index + 1}天`
+  }
+
+  return `第${index + 1}天`
 }
 
 function getTempRange(forecast: WeatherData["forecast"]) {

@@ -43,7 +43,7 @@ export function ClockPanel({ clock, isDarkTheme }: ClockPanelProps) {
       >
         TIME
       </p>
-      <h2 className="mt-2 text-base font-semibold sm:text-xl md:text-2xl">
+      <h2 className="mt-2 text-base font-semibold sm:text-xl md:text-2xl" suppressHydrationWarning>
         {clock.year}年{clock.month}月{clock.date}日 {WEEK_DAYS_FULL[clock.day]}
       </h2>
 
@@ -51,6 +51,7 @@ export function ClockPanel({ clock, isDarkTheme }: ClockPanelProps) {
         <p
           className="font-[var(--font-digits)] text-4xl font-semibold leading-none tracking-tight sm:text-5xl md:text-6xl xl:text-7xl"
           aria-live="polite"
+          suppressHydrationWarning
         >
           {clock.hours}:{clock.minutes}:{clock.seconds}
         </p>
@@ -61,6 +62,7 @@ export function ClockPanel({ clock, isDarkTheme }: ClockPanelProps) {
               ? "bg-slate-700/70 text-slate-100"
               : "bg-amber-100 text-amber-700"
           )}
+          suppressHydrationWarning
         >
           {getPeriod(clock.hour24)}
         </p>

@@ -95,24 +95,35 @@ export async function getTodayWeather(location: string): Promise<WeatherNow | nu
 }
 
 export async function get7DaysWeather(location: string): Promise<WeatherForecastDay[]> {
-  const data = await requestJson<Weather7DayResponse>(
-    `/weather/7day?location=${encodeURIComponent(location)}`
-  )
+  try {
+    const data = await requestJson<Weather7DayResponse>(
+      `/weather/7day?location=${encodeURIComponent(location)}`
+    )
 
-  if (data.code !== "200") {
+    if (data?.code !== "200" || !Array.isArray(data?.daily)) {
+      return []
+    }
+
+    return data.daily.map((item) => ({
+      ...item,
+      date: item.fxDate ? item.fxDate.slice(5, 10) : "",
+    }))
+  } catch (error) {
+    console.error("Failed to fetch 7 days weather:", error)
     return []
   }
-
-  return data.daily.map((item) => ({
-    ...item,
-    date: item.fxDate.slice(5, 10),
-  }))
 }
 
 export async function getCityList(location: string) {
-  const data = await requestJson<CityLookupResponse>(
-    `/city/lookup?location=${encodeURIComponent(location)}`
-  )
+  try {
+    const data = await requestJson<CityLookupResponse>(
+      `/city/lookup?location=${encodeURIComponent(location)}`
+    )
 
-  return data.code === "200" ? data.location : []
+    return data?.code === "200" && Array.isArray(data?.location) ? data.location : []
+  } catch (error) {
+    console.error("Failed to fetch city list:", error)
+    return []
+  }
 }
+

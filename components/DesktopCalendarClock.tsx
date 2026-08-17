@@ -23,9 +23,8 @@ export function DesktopCalendarClock() {
   const controlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clock = useClock()
-  const { calendars, leadingEmptyCount, monthTitle, todayInfo } = useCalendar(clock.now)
+  const calendar = useCalendar(clock.now)
   const { weather, loading, hasLocation } = useWeather([clock.date])
-  const calendarMonthKey = `${clock.year}-${clock.month}`
   const contentPaddingClass = useMemo(() => {
     const paddingMap: Record<ContentPaddingLevel, string> = {
       compact: "p-2 sm:p-3 md:p-4",
@@ -191,12 +190,9 @@ export function DesktopCalendarClock() {
 
           <main className="grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)]">
             <CalendarPanel
-              key={calendarMonthKey}
-              monthTitle={monthTitle}
-              calendars={calendars}
-              leadingEmptyCount={leadingEmptyCount}
+              key={calendar.monthTitle}
+              calendar={calendar}
               currentDay={clock.date}
-              todayInfo={todayInfo}
               isDarkTheme={isDarkTheme}
             />
 
