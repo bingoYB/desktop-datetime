@@ -16,11 +16,48 @@ export function useClock(): ClockState {
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setNow(new Date())
-    }, 1000)
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    let intervalId: ReturnType<typeof setInterval> | null = null
 
-    return () => window.clearInterval(timer)
+    // 精确对齐到每秒的000毫秒边缘触发更新，消除时间漂移和跳秒延迟
+    const syncAndStartTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId)
+      if (intervalId) clearInterval(intervalId)
+
+      const update = () => setNow(new Date())
+      update()
+
+      const nowMs = new Date().getMilliseconds()
+      const delay = Math.max(0, 1000 - nowMs)
+
+      timeoutId = setTimeout(() => {
+        update()
+        intervalId = setInterval(update, 1000)
+      }, delay)
+    }
+
+    syncAndStartTimer()
+
+    // 页面切回前台（从休眠唤醒、切换标签页等）时立即校准时间
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        syncAndStartTimer()
+      }
+    }
+
+    const handleFocus = () => {
+      syncAndStartTimer()
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+    window.addEventListener("focus", handleFocus)
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+      if (intervalId) clearInterval(intervalId)
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+      window.removeEventListener("focus", handleFocus)
+    }
   }, [])
 
   return useMemo(() => {
@@ -39,3 +76,4 @@ export function useClock(): ClockState {
     }
   }, [now])
 }
+
