@@ -531,7 +531,7 @@ export function WeatherPanel({
               </div>
             ) : (
               <ScrollArea className="min-h-0 flex-1 h-full">
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-white/5 flex flex-col justify-between min-h-full">
                   {forecast.slice(0, 8).map((day, index) => {
                     const min = toNumber(day.tempMin)
                     const max = toNumber(day.tempMax)
@@ -541,7 +541,7 @@ export function WeatherPanel({
                     return (
                       <article
                         key={day.fxDate}
-                        className="grid grid-cols-[36px_22px_minmax(0,1fr)] sm:grid-cols-[40px_24px_minmax(0,1fr)] items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:py-2 xl:py-2.5"
+                        className="grid grid-cols-[36px_22px_minmax(0,1fr)] sm:grid-cols-[40px_24px_minmax(0,1fr)] items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:py-2 lg:py-2 xl:py-2.5 flex-1 min-h-[34px]"
                       >
                         <p className="text-xs sm:text-sm font-medium">{getWeekLabel(day.fxDate, index)}</p>
                         <WeatherIcon
@@ -563,8 +563,8 @@ export function WeatherPanel({
                               className={cn(
                                 "absolute top-0 h-full rounded-full",
                                 isDarkTheme
-                                  ? "bg-gradient-to-r from-cyan-400 to-amber-400"
-                                  : "bg-gradient-to-r from-sky-400 to-amber-500"
+                                   ? "bg-gradient-to-r from-cyan-400 to-amber-400"
+                                   : "bg-gradient-to-r from-sky-400 to-amber-500"
                               )}
                               style={{
                                 left: `${Math.max(Math.min(barStart, 100), 0)}%`,
