@@ -27,9 +27,9 @@ export function DesktopCalendarClock() {
   const { weather, loading, hasLocation } = useWeather([clock.date])
   const contentPaddingClass = useMemo(() => {
     const paddingMap: Record<ContentPaddingLevel, string> = {
-      compact: "p-2 sm:p-3 md:p-4",
-      default: "p-3 sm:p-4 md:p-6",
-      spacious: "p-4 sm:p-6 md:p-8",
+      compact: "p-2 sm:p-2.5 lg:p-2.5 xl:p-3 2xl:p-4",
+      default: "p-2.5 sm:p-3.5 lg:p-3 xl:p-4 2xl:p-6",
+      spacious: "p-3 sm:p-4 lg:p-4 xl:p-6 2xl:p-8",
     }
     return paddingMap[contentPaddingLevel]
   }, [contentPaddingLevel])
@@ -38,8 +38,6 @@ export function DesktopCalendarClock() {
     if (!weather?.today?.icon) return 'none';
     const icon = parseInt(weather.today.icon, 10);
 
-    console.log(icon);
-    
     // QWeather Icons mapping
     if (icon >= 300 && icon < 400) {
        if (icon >= 302 && icon <= 304) return 'storm';
@@ -133,13 +131,13 @@ export function DesktopCalendarClock() {
 
         <div
           className={cn(
-            "relative z-10 mx-auto flex min-h-screen w-full max-w-[1680px] flex-col lg:h-screen",
+            "relative z-10 mx-auto flex min-h-screen w-full max-w-[1680px] flex-col lg:h-screen lg:min-h-0",
             contentPaddingClass
           )}
         >
           <header
             className={cn(
-              "absolute right-3 top-3 z-20 flex gap-2 transition-all duration-300 sm:right-4 sm:top-4 md:right-6 md:top-6",
+              "absolute right-3 top-3 z-20 flex gap-1.5 sm:gap-2 transition-all duration-300 sm:right-4 sm:top-4 md:right-6 md:top-6",
               showControls ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
             )}
             onClick={(e) => e.stopPropagation()}
@@ -147,48 +145,50 @@ export function DesktopCalendarClock() {
             <button
               type="button"
               className={cn(
-                "inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
+                "inline-flex h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 items-center justify-center rounded-full border backdrop-blur-xl shadow-lg transition-all",
                 isDarkTheme
-                  ? "border-slate-700/70 bg-slate-900/80 hover:bg-slate-800"
-                  : "border-amber-200 bg-white/80 hover:bg-white"
+                  ? "border-slate-700/80 bg-slate-900/85 hover:bg-slate-800 text-slate-200"
+                  : "border-amber-200 bg-white/85 hover:bg-white text-slate-700"
               )}
               onClick={() => setShowWeatherBg(prev => !prev)}
               aria-label={showWeatherBg ? "关闭天气背景" : "开启天气背景"}
               title={showWeatherBg ? "关闭天气背景" : "开启天气背景"}
             >
-              {showWeatherBg ? <Cloud className="h-5 w-5" /> : <CloudOff className="h-5 w-5" />}
+              {showWeatherBg ? <Cloud className="h-4 w-4 sm:h-5 sm:w-5" /> : <CloudOff className="h-4 w-4 sm:h-5 sm:w-5" />}
             </button>
 
             <button
               type="button"
               className={cn(
-                "inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
+                "inline-flex h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 items-center justify-center rounded-full border backdrop-blur-xl shadow-lg transition-all",
                 isDarkTheme
-                  ? "border-slate-700/70 bg-slate-900/80 hover:bg-slate-800"
-                  : "border-amber-200 bg-white/80 hover:bg-white"
+                  ? "border-slate-700/80 bg-slate-900/85 hover:bg-slate-800 text-slate-200"
+                  : "border-amber-200 bg-white/85 hover:bg-white text-slate-700"
               )}
               onClick={() => setIsSettingsOpen(true)}
               aria-label="打开设置"
+              title="打开设置"
             >
-              <Settings2 className="h-5 w-5" />
+              <Settings2 className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
 
             <button
               type="button"
               className={cn(
-                "inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
+                "inline-flex h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 items-center justify-center rounded-full border backdrop-blur-xl shadow-lg transition-all",
                 isDarkTheme
-                  ? "border-slate-700/70 bg-slate-900/80 hover:bg-slate-800"
-                  : "border-amber-200 bg-white/80 hover:bg-white"
+                  ? "border-slate-700/80 bg-slate-900/85 hover:bg-slate-800 text-slate-200"
+                  : "border-amber-200 bg-white/85 hover:bg-white text-slate-700"
               )}
               onClick={toggleFullscreen}
               aria-label={isFullscreen ? "退出全屏" : "进入全屏"}
+              title={isFullscreen ? "退出全屏" : "进入全屏"}
             >
-              {isFullscreen ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
+              {isFullscreen ? <Minimize2 className="h-4 w-4 sm:h-5 sm:w-5" /> : <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5" />}
             </button>
           </header>
 
-          <main className="grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)]">
+          <main className="grid gap-3 sm:gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.38fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1.42fr)_minmax(0,1fr)]">
             <CalendarPanel
               key={calendar.monthTitle}
               calendar={calendar}
@@ -196,7 +196,7 @@ export function DesktopCalendarClock() {
               isDarkTheme={isDarkTheme}
             />
 
-            <section className="grid gap-4 lg:min-h-0 lg:grid-rows-[auto_minmax(0,1fr)]">
+            <section className="flex flex-col gap-3 sm:gap-4 lg:min-h-0 lg:h-full">
               <ClockPanel clock={clock} isDarkTheme={isDarkTheme} />
               <WeatherPanel
                 weather={weather ?? null}

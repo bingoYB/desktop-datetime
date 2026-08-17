@@ -316,11 +316,6 @@ export function WeatherCard({
 
   if (!today && !sceneOverride) return null
 
-  // If we have a scene override but no real data, we might want to mock some display data?
-  // But for now let's assume if sceneOverride is present, we render with whatever data we validly have or placeholders if needed.
-  // Actually, the card needs today.temp etc.
-  // If sceneOverride is present but weather is null, we should probably render a mockup or expect the caller to provide mock weather.
-  
   // Safe access for values if weather is missing but scene is forced (preview mode)
   const displayTemp = today?.temp ?? "--"
   const displayIcon = today?.icon ?? "999"
@@ -331,13 +326,13 @@ export function WeatherCard({
   return (
     <article
       className={cn(
-        "relative mt-3 overflow-hidden rounded-[1.95rem]",
+        "relative shrink-0 overflow-hidden rounded-xl sm:rounded-2xl shadow-md transition-all",
         weatherTheme.shell
       )}
     >
       <div
         className={cn(
-          "relative overflow-hidden rounded-[1.45rem] p-6",
+          "relative overflow-hidden rounded-[calc(theme(borderRadius.xl)-1px)] sm:rounded-[calc(theme(borderRadius.2xl)-1px)] p-3 sm:p-3.5 xl:p-4 2xl:p-5",
           weatherTheme.surface
         )}
       >
@@ -373,8 +368,8 @@ export function WeatherCard({
         {/* Animated weather effects overlay */}
         <WeatherEffects scene={scene} isDarkTheme={isDarkTheme} />
 
-        <div className="relative z-10 flex min-h-32 flex-col justify-between gap-4 sm:min-h-[150px] sm:gap-5">
-          <div className="flex items-start justify-between gap-3 sm:gap-4">
+        <div className="relative z-10 flex min-h-[90px] sm:min-h-[110px] xl:min-h-[130px] flex-col justify-between gap-2.5 sm:gap-3">
+          <div className="flex items-start justify-between gap-2 sm:gap-3">
             <div
               className={cn(
                 "flex min-w-0 items-center gap-2",
@@ -384,37 +379,37 @@ export function WeatherCard({
               <WeatherIcon
                 icon={displayIcon}
                 className={cn(
-                  "h-8 w-8 shrink-0 sm:h-9 sm:w-9",
+                  "h-6 w-6 shrink-0 sm:h-7 sm:w-7 xl:h-8 xl:w-8",
                   isDarkTheme ? "text-slate-100/90" : "text-slate-700/80"
                 )}
               />
               <p
                 className={cn(
-                  "truncate text-[clamp(1.05rem,5.6vw,1.8rem)] font-semibold leading-none",
+                  "truncate text-base sm:text-lg xl:text-2xl font-semibold leading-none",
                   isDarkTheme ? "text-slate-50" : "text-slate-800"
                 )}
               >
                 {displayText}
               </p>
             </div>
-            <p className="shrink-0 font-[var(--font-digits)] text-[clamp(1.75rem,9vw,3.1rem)] font-light leading-none tracking-tight">
+            <p className="shrink-0 font-[var(--font-digits)] text-2xl sm:text-3xl xl:text-4xl font-light leading-none tracking-tight">
               {displayTemp}°
             </p>
           </div>
 
-          <div className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
+          <div className="flex flex-row items-end justify-between gap-2">
             <div className="min-w-0">
               <p
                 className={cn(
-                  "text-[clamp(0.7rem,3.2vw,0.92rem)] leading-none",
-                  isDarkTheme ? "text-slate-200/85" : "text-slate-600"
+                  "text-[10px] sm:text-xs leading-none",
+                  isDarkTheme ? "text-slate-300" : "text-slate-500"
                 )}
               >
                 我的位置
               </p>
               <p
                 className={cn(
-                  "mt-1 truncate text-[clamp(0.82rem,4.2vw,1.2rem)] font-semibold leading-none",
+                  "mt-0.5 truncate text-xs sm:text-sm xl:text-base font-semibold leading-none",
                   isDarkTheme ? "text-slate-50" : "text-slate-800"
                 )}
               >
@@ -422,32 +417,32 @@ export function WeatherCard({
               </p>
             </div>
 
-            <div className="flex max-w-full flex-wrap items-end justify-start gap-x-2.5 gap-y-1.5 sm:w-auto sm:justify-end sm:gap-x-3">
-              <div className="flex min-w-0 items-end gap-1 sm:gap-1.5">
-                <p
+            <div className="flex shrink-0 items-end gap-2 sm:gap-3">
+              <div className="flex items-baseline gap-1">
+                <span
                   className={cn(
-                    "whitespace-nowrap text-[clamp(0.72rem,2.8vw,0.9rem)] font-semibold leading-[0.92]",
-                    isDarkTheme ? "text-slate-200/90" : "text-slate-600"
+                    "text-[10px] sm:text-xs font-semibold leading-none",
+                    isDarkTheme ? "text-slate-300" : "text-slate-600"
                   )}
                 >
-                  最高
-                </p>
-                <p className="font-[var(--font-digits)] text-[clamp(1.3rem,6.2vw,2.05rem)] font-light leading-none">
+                  高
+                </span>
+                <span className="font-[var(--font-digits)] text-xs sm:text-sm xl:text-base font-light leading-none">
                   {displayHigh}°
-                </p>
+                </span>
               </div>
-              <div className="flex min-w-0 items-end gap-1 sm:gap-1.5">
-                <p
+              <div className="flex items-baseline gap-1">
+                <span
                   className={cn(
-                    "whitespace-nowrap text-[clamp(0.72rem,2.8vw,0.9rem)] font-semibold leading-[0.92]",
-                    isDarkTheme ? "text-slate-200/90" : "text-slate-600"
+                    "text-[10px] sm:text-xs font-semibold leading-none",
+                    isDarkTheme ? "text-slate-300" : "text-slate-600"
                   )}
                 >
-                  最低
-                </p>
-                <p className="font-[var(--font-digits)] text-[clamp(1.3rem,6.2vw,2.05rem)] font-light leading-none">
+                  低
+                </span>
+                <span className="font-[var(--font-digits)] text-xs sm:text-sm xl:text-base font-light leading-none">
                   {displayLow}°
-                </p>
+                </span>
               </div>
             </div>
           </div>
@@ -465,9 +460,9 @@ function WeatherEmptyState({
   return (
     <div
       className={cn(
-        "mt-3 rounded-[1.5rem] border px-4 py-5 text-sm backdrop-blur-xl",
+        "mt-2 rounded-xl sm:rounded-2xl border px-3 py-4 text-xs sm:text-sm backdrop-blur-xl",
         isDarkTheme
-          ? "border-white/20 bg-sky-900/40 text-slate-100"
+          ? "border-white/15 bg-sky-900/30 text-slate-200"
           : "border-sky-200 bg-white/70 text-slate-600"
       )}
     >
@@ -489,21 +484,22 @@ export function WeatherPanel({
   const forecast = weather?.forecast ?? []
   const today = weather?.today
   const tempRange = getTempRange(forecast)
-  // const todayLow = forecast[0]?.tempMin ?? "-"
-  // const todayHigh = forecast[0]?.tempMax ?? "-"
-  // const locationTitle = hasLocation ? "当前位置" : "未定位"
-  // const weatherTheme = getWeatherCardTheme(resolveWeatherScene(today?.icon ?? ""), isDarkTheme)
 
   return (
     <section
       className={cn(
-        "flex min-h-0 flex-col overflow-hidden rounded-3xl border px-4 py-5 shadow-2xl backdrop-blur-2xl sm:px-5 sm:py-6 md:px-6 lg:h-full",
+        "flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl sm:rounded-3xl border p-3.5 sm:p-4 md:p-5 lg:p-4 xl:p-5 shadow-xl backdrop-blur-xl lg:h-full transition-colors duration-300",
         isDarkTheme
-          ? "border-slate-700/60 bg-slate-900/70"
-          : "border-sky-200/80 bg-white/80"
+          ? "border-slate-700/60 bg-slate-900/70 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
+          : "border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
       )}
     >
-      <p className={cn("text-xs tracking-[0.2em]", isDarkTheme ? "text-slate-300" : "text-slate-500")}>
+      <p
+        className={cn(
+          "text-[10px] sm:text-xs tracking-[0.2em] font-semibold uppercase mb-1.5 sm:mb-2 shrink-0",
+          isDarkTheme ? "text-slate-400" : "text-slate-500"
+        )}
+      >
         WEATHER
       </p>
 
@@ -523,19 +519,19 @@ export function WeatherPanel({
 
           <article
             className={cn(
-              "mt-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.5rem] border",
+              "mt-2 sm:mt-3 flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl sm:rounded-2xl border",
               isDarkTheme
-                ? "border-white/20 bg-slate-900/35"
-                : "border-sky-200/80 bg-white/65"
+                ? "border-white/10 bg-slate-900/40"
+                : "border-sky-200/70 bg-white/60"
             )}
           >
             {forecast.length === 0 ? (
-              <div className={cn("px-4 py-4 text-sm", isDarkTheme ? "text-slate-200" : "text-slate-600")}>
+              <div className={cn("px-3 py-3 text-xs sm:text-sm", isDarkTheme ? "text-slate-300" : "text-slate-600")}>
                 暂无预报数据。
               </div>
             ) : (
-              <ScrollArea className="min-h-0 flex-1">
-                <div className="divide-y divide-white/10">
+              <ScrollArea className="min-h-0 flex-1 h-full">
+                <div className="divide-y divide-white/5">
                   {forecast.slice(0, 8).map((day, index) => {
                     const min = toNumber(day.tempMin)
                     const max = toNumber(day.tempMax)
@@ -545,30 +541,30 @@ export function WeatherPanel({
                     return (
                       <article
                         key={day.fxDate}
-                        className="grid grid-cols-[40px_24px_minmax(0,1fr)] items-center gap-2 px-4 py-3"
+                        className="grid grid-cols-[36px_22px_minmax(0,1fr)] sm:grid-cols-[40px_24px_minmax(0,1fr)] items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:py-2 xl:py-2.5"
                       >
-                        <p className="text-sm font-medium">{getWeekLabel(day.fxDate, index)}</p>
+                        <p className="text-xs sm:text-sm font-medium">{getWeekLabel(day.fxDate, index)}</p>
                         <WeatherIcon
                           icon={day.iconDay}
-                          className={cn("h-6 w-6", isDarkTheme ? "text-sky-100" : "text-sky-600")}
+                          className={cn("h-5 w-5 sm:h-5 sm:w-5", isDarkTheme ? "text-sky-100" : "text-sky-600")}
                         />
 
-                        <div className="flex items-center gap-2">
-                          <p className={cn("w-9 text-right text-xs", isDarkTheme ? "text-sky-100/75" : "text-slate-500")}>
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <p className={cn("w-7 sm:w-8 text-right text-[11px] sm:text-xs", isDarkTheme ? "text-sky-200/80" : "text-slate-500")}>
                             {day.tempMin}°
                           </p>
                           <div
                             className={cn(
                               "relative h-1.5 flex-1 rounded-full",
-                              isDarkTheme ? "bg-slate-700/70" : "bg-sky-100"
+                              isDarkTheme ? "bg-slate-700/60" : "bg-sky-100"
                             )}
                           >
                             <span
                               className={cn(
                                 "absolute top-0 h-full rounded-full",
                                 isDarkTheme
-                                  ? "bg-gradient-to-r from-cyan-300 to-orange-300"
-                                  : "bg-gradient-to-r from-sky-400 to-amber-400"
+                                  ? "bg-gradient-to-r from-cyan-400 to-amber-400"
+                                  : "bg-gradient-to-r from-sky-400 to-amber-500"
                               )}
                               style={{
                                 left: `${Math.max(Math.min(barStart, 100), 0)}%`,
@@ -576,7 +572,7 @@ export function WeatherPanel({
                               }}
                             />
                           </div>
-                          <p className="w-9 text-xs font-semibold text-right">{day.tempMax}°</p>
+                          <p className="w-7 sm:w-8 text-[11px] sm:text-xs font-semibold text-right">{day.tempMax}°</p>
                         </div>
                       </article>
                     )
@@ -590,3 +586,4 @@ export function WeatherPanel({
     </section>
   )
 }
+
